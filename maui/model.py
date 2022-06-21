@@ -325,7 +325,7 @@ class Maui(BaseEstimator):
         yhat:   Series (n_samples) cluster labels for each sample
         """
         if kmeans_kwargs is None:
-            kmeans_kwargs = {"n_init": 1000, "n_jobs": 2}
+            kmeans_kwargs = {"n_init": 1000} #kmeans_kwargs = {"n_init": 1000, "n_jobs": 2}
         if k is not None:
             return pd.Series(
                 KMeans(k, **kmeans_kwargs).fit_predict(self.z_), index=self.z_.index
@@ -368,7 +368,7 @@ class Maui(BaseEstimator):
             self.kmeans_scores.index.name = "K"
             opt_k_index = np.argmax(self.kmeans_scores)
             self.optimal_k_ = self.kmeans_scores.index[opt_k_index]
-            self.yhat_ = yhats[opt_k_index]
+            self.yhat_ = yhats[self.optimal_k_] #self.yhat_ = yhats[self.opt_k_index]
             return self.yhat_
 
     def compute_roc(self, y, **kwargs):

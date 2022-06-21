@@ -7,8 +7,10 @@ import tensorflow as tf
 from keras.models import Model
 from keras import backend as K
 from keras.callbacks import Callback
-from keras import metrics, optimizers
-from keras.layers.normalization import BatchNormalization
+#from keras import metrics, optimizers
+from tensorflow.keras import metrics, optimizers
+#from keras.layers.normalization import BatchNormalization
+from tensorflow.keras.layers import BatchNormalization
 from keras.layers import Input, Dense, Lambda, Activation
 
 

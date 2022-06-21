@@ -19,12 +19,12 @@ setup(
     long_description_content_type="text/markdown",
     install_requires=[
         "pytest",
-        "numpy>=1.18.2",
-        "pandas>=1.0.3",
-        "scipy==1.2.1",
-        "scikit-learn",
-        "keras",
-        "tensorflow<2.0",
+        "numpy>=1.19.5",
+        "pandas>=1.3.4",
+        "scipy>=1.7.2",
+        "scikit-learn>=1.0.1",
+        "keras>=2.6.0",
+        "tensorflow>2.6.2",
         "pytest>=3.6.0",
     ],
 )

@@ -12,7 +12,7 @@ from scipy import cluster
 from collections import Counter
 from sklearn.svm import LinearSVC
 from sklearn.model_selection import KFold
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve, auc, roc_auc_score
 from sklearn.preprocessing import label_binarize
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
@@ -260,6 +260,38 @@ def compute_roc(z, y, classifier=LinearSVC(C=0.001), cv_folds=10):
     )
     return roc_curves
 
+def compute_roc_auc(z, y, classifier=LinearSVC(C=0.001), cv_folds=10):
+    """Compute the ROC (false positive rate, true positive rate) using cross-validation.
+
+    Parameters
+    ----------
+    z:          DataFrame (n_samples, n_latent_factors) of latent factor values
+    y:          Series (n_samples,) of ground-truth labels to try to predict
+    classifier: Classifier object to use, default ``LinearSVC(C=.001)``
+
+    Returns
+    -------
+    roc_curves: dict, one key per class as well as "mean", each value is a dataframe
+                containing the tpr (true positive rate) and fpr (false positive rate)
+                defining that class (or the mean) ROC.
+    """
+    class_names = sorted(y.unique())
+    z_to_use = z.loc[y.index]
+    y_true_bin = label_binarize(y, classes=class_names)
+    y_proba = cross_val_predict(
+        classifier, z_to_use, y, cv=cv_folds, method="decision_function"
+    )
+
+    # Compute ROC curve and ROC area for each class
+    roc_aucs = dict()
+    for i, cl_name in enumerate(class_names):
+        score = roc_auc_score(y_true_bin[:, i], y_proba[:, i])
+        roc_aucs[cl_name] = score
+
+    # Then interpolate all ROC curves at this points
+    mean_roc = np.mean([roc_aucs[k] for k in roc_aucs])
+    roc_aucs["mean"] = mean_roc
+    return roc_aucs
 
 def estimate_kaplan_meier(
     y, survival, duration_column="duration", observed_column="observed"
